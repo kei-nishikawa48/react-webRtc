@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
+import Video from "./Video";
 
-const VideoLocal = () => {
+const VideoLocal = ({ localPeerName }: { localPeerName: string }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const currentVideoRef = videoRef.current;
   useEffect(() => {
@@ -23,7 +24,7 @@ const VideoLocal = () => {
   }, [currentVideoRef]);
   return (
     <>
-      <video ref={videoRef} />
+      <Video isLocal={true} name={localPeerName} videoRef={videoRef} />
     </>
   );
 };

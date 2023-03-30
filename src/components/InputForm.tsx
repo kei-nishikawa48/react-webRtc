@@ -5,11 +5,17 @@ const InputForm: FC<{
   setPeerName: (name: string) => void;
   peerName: string;
 }> = ({ name, setPeerName, peerName }) => {
+  console.log(!!peerName);
   return (
     <main className="bg-slate-600 w-full ">
       <h1 className=" text-white text-xl">webRTC</h1>
 
-      <div className=" h-full text-center">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+        className=" h-full text-center"
+      >
         <h1 className="text-xl text-white">{name}の名前を入力してください</h1>
         <div>
           <label htmlFor="name" className="text-white">
@@ -23,10 +29,17 @@ const InputForm: FC<{
             }}
           />
         </div>
-        <button className=" rounded-sm bg-blue-400 px-3 py-1 hover:bg-blue-500">
+        <button
+          disabled={!peerName}
+          className={
+            !peerName
+              ? " bg-gray-500 text-white font-bold py-2 px-4 rounded"
+              : "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          }
+        >
           登録
         </button>
-      </div>
+      </form>
     </main>
   );
 };

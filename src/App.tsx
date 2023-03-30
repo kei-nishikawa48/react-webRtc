@@ -2,22 +2,25 @@ import { useState } from "react";
 import "./index.css";
 import InputLocalForm from "./components/InputLocalForm";
 import InputRemoteForm from "./components/InputRemoteForm";
-const getMedia = async () => {
-  const constraints: MediaStreamConstraints = { audio: true, video: true };
+import VideoArea from "./components/VideoArea";
 
-  try {
-    return await navigator.mediaDevices.getUserMedia(constraints);
-  } catch (er) {
-    console.error(er);
-  }
-};
-
-getMedia();
 const App = () => {
+  const [localPeerName, setLocalPeerName] = useState("");
+  const [remotePeerName, setRemotePeerName] = useState("");
   return (
     <>
-      <InputLocalForm />
-      <InputRemoteForm />
+      <InputLocalForm
+        setLocalPeerName={setLocalPeerName}
+        localPeerName={localPeerName}
+      />
+      <InputRemoteForm
+        setRemotePeerName={setRemotePeerName}
+        remotePeerName={remotePeerName}
+      />
+      <VideoArea
+        localPeerName={localPeerName}
+        remotePeerName={remotePeerName}
+      />
     </>
   );
 };

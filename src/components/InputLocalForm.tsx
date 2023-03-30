@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import InputForm from "./InputForm";
 
-const InputLocalForm = () => {
-  const [localPeerName, setLocalPeerName] = useState("");
+type Props = {
+  setLocalPeerName: (name: string) => void;
+  localPeerName: string;
+};
+const InputLocalForm: FC<Props> = ({ setLocalPeerName, localPeerName }) => {
   return (
     <InputForm
       name={"自分"}

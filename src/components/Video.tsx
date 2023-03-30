@@ -7,6 +7,7 @@ const Video = ({
   videoRef: React.RefObject<HTMLVideoElement>;
   isLocal: boolean;
 }) => {
+  console.log(videoRef);
   return (
     <div className="w-full h-full">
       <video

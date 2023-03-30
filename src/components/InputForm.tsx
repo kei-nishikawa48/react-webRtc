@@ -4,18 +4,13 @@ const InputForm: FC<{
   name: string;
   setPeerName: (name: string) => void;
   peerName: string;
-}> = ({ name, setPeerName, peerName }) => {
-  console.log(!!peerName);
+  handleSubmit: React.FormEventHandler<HTMLFormElement>;
+}> = ({ name, setPeerName, peerName, handleSubmit }) => {
   return (
     <main className="bg-slate-600 w-full ">
       <h1 className=" text-white text-xl">webRTC</h1>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-        className=" h-full text-center"
-      >
+      <form onSubmit={handleSubmit} className=" h-full text-center">
         <h1 className="text-xl text-white">{name}の名前を入力してください</h1>
         <div>
           <label htmlFor="name" className="text-white">

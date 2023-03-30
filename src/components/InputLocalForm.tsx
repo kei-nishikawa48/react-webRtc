@@ -1,16 +1,24 @@
-import { FC, useState } from "react";
 import InputForm from "./InputForm";
+import { useNavigate } from "react-router-dom";
 
-type Props = {
-  setLocalPeerName: (name: string) => void;
+const InputLocalForm = ({
+  setLocalPeerName,
+  localPeerName,
+}: {
+  setLocalPeerName: React.Dispatch<React.SetStateAction<string>>;
   localPeerName: string;
-};
-const InputLocalForm: FC<Props> = ({ setLocalPeerName, localPeerName }) => {
+}) => {
+  const navigate = useNavigate();
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    navigate("/remote");
+  };
   return (
     <InputForm
       name={"自分"}
       setPeerName={setLocalPeerName}
       peerName={localPeerName}
+      handleSubmit={handleSubmit}
     />
   );
 };

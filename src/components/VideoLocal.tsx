@@ -3,13 +3,16 @@ import Video from "./Video";
 
 const VideoLocal = ({ localPeerName }: { localPeerName: string }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const currentVideoRef = videoRef.current;
   useEffect(() => {
-    if (!currentVideoRef) {
-      return;
-    }
+    if (videoRef === null) return;
+    const currentVideoRef = videoRef.current;
+    if (currentVideoRef === null) return;
+    console.log(videoRef);
     const getMedia = async () => {
-      const constraints: MediaStreamConstraints = { audio: true, video: true };
+      const constraints: MediaStreamConstraints = {
+        audio: true,
+        video: true,
+      };
 
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia(
@@ -20,8 +23,10 @@ const VideoLocal = ({ localPeerName }: { localPeerName: string }) => {
         console.error(er);
       }
     };
-    getMedia();
-  }, [currentVideoRef]);
+    (async () => {
+      await getMedia();
+    })();
+  }, [videoRef]);
   return (
     <>
       <Video isLocal={true} name={localPeerName} videoRef={videoRef} />

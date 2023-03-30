@@ -1,10 +1,10 @@
 import { FC } from "react";
 import VideoLocal from "./VideoLocal";
-type Props = {
-  localPeerName: string;
-  remotePeerName: string;
-};
-const VideoArea: FC<Props> = ({ localPeerName, remotePeerName }) => {
+
+const VideoArea: FC<{ localPeerName: string; remotePeerName: string }> = ({
+  localPeerName,
+  remotePeerName,
+}) => {
   return (
     <div className="w-full grid grid-cols-2 gap-4">
       <div className="w-full bg-gray-50 p-4">

@@ -4,18 +4,19 @@ import InputRemoteForm from "./components/InputRemoteForm";
 import VideoArea from "./components/VideoArea";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import RTCClient from "./utils/RTCClient";
+import useRTCClient from "./hooks/useRtcClient";
 const App = () => {
-  const rtcClinet = new RTCClient();
+  const rtcClient = useRTCClient();
+  if (rtcClient === null) return <></>;
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<InputLocalForm rtcClient={rtcClinet} />} />
+        <Route path="/" element={<InputLocalForm rtcClient={rtcClient} />} />
         <Route
           path="/remote"
-          element={<InputRemoteForm rtcClient={rtcClinet} />}
+          element={<InputRemoteForm rtcClient={rtcClient} />}
         />
-        <Route path="/video" element={<VideoArea rtcClient={rtcClinet} />} />
+        <Route path="/video" element={<VideoArea rtcClient={rtcClient} />} />
       </Routes>
     </BrowserRouter>
   );

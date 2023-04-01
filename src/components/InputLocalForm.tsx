@@ -8,9 +8,8 @@ const InputLocalForm = ({ rtcClient }: { rtcClient: RTCClient }) => {
   const navigate = useNavigate();
   const handleSubmit = useCallback<React.FormEventHandler<HTMLFormElement>>(
     (e) => {
+      rtcClient.startListening(peerName);
       e.preventDefault();
-      rtcClient.localPeerName = peerName;
-      rtcClient.setRtcClient();
       navigate("/remote");
     },
     [peerName, rtcClient]

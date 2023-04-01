@@ -9,8 +9,12 @@ const useRTCClient = () => {
 		forceRender();
 	};
 	useEffect(() => {
-		const client = new RTCClient(setRtcClient);
-		client.setRtcClient();
+		const init = async () => {
+			const client = new RTCClient(setRtcClient);
+			await client.getUserMedia();
+			client.setRtcClient();
+		};
+		init();
 	}, []);
 	return rtcClient;
 };

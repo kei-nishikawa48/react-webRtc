@@ -10,6 +10,7 @@ const InputLocalForm = ({ rtcClient }: { rtcClient: RTCClient }) => {
     (e) => {
       e.preventDefault();
       rtcClient.localPeerName = peerName;
+      rtcClient.setRtcClient();
       navigate("/remote");
     },
     [peerName, rtcClient]

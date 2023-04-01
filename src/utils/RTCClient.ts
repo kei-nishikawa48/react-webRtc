@@ -1,32 +1,30 @@
 export default class RTCClient {
 	rtcPeerConnection: RTCPeerConnection;
-	private _localPeerName: string;
-	private _remotePeerName: string;
-	setRtcClient: () => void;
-	constructor(_setRtcClient: (rtcClient: RTCClient) => void) {
+	mediaStream: MediaStream | null;
+	localPeerName: string;
+	remotePeerName: string;
+	private _setRtcClient: (rtcClient: RTCClient) => void;
+	constructor(setRtcClient: (rtcClient: RTCClient) => void) {
 		const config = {
 			iceServers: [{ urls: "stun:stun.stunprotocol.org" }],
 		};
 		this.rtcPeerConnection = new RTCPeerConnection(config);
-		this._localPeerName = "";
-		this._remotePeerName = "";
-		this.setRtcClient = () => {
-			_setRtcClient(this);
-		};
-	}
-	set localPeerName(name: string) {
-		this._localPeerName = name;
-		this.setRtcClient();
-	}
-	get localPeerName() {
-		return this._localPeerName;
+		this.localPeerName = "";
+		this.remotePeerName = "";
+		this._setRtcClient = setRtcClient;
+		this.mediaStream = null;
 	}
 
-	set remotePeerName(name: string) {
-		this._remotePeerName = name;
-		this.setRtcClient();
+	setRtcClient() {
+		this._setRtcClient(this);
 	}
-	get remotePeerName() {
-		return this._remotePeerName;
+
+	async getUserMedia() {
+		try {
+			const constraints = { audio: true, video: true };
+			this.mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+		} catch (error) {
+			console.error(error);
+		}
 	}
 }

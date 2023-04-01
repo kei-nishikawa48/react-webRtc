@@ -1,11 +1,16 @@
 import { useEffect, useRef } from "react";
 import Video from "./Video";
+import RTCClient from "../utils/RTCClient";
 
-const VideoRemote = ({ remotePeerName }: { remotePeerName: string }) => {
+const VideoRemote = ({ rtcClient }: { rtcClient: RTCClient }) => {
   const videoRef = null;
   return (
     <>
-      <Video isLocal={false} name={remotePeerName} videoRef={videoRef} />
+      <Video
+        isLocal={false}
+        name={rtcClient.remotePeerName}
+        videoRef={videoRef}
+      />
     </>
   );
 };

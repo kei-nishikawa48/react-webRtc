@@ -1,5 +1,6 @@
 import { FC } from "react";
 import VideoLocal from "./VideoLocal";
+import VideoRemote from "./VideoRemote";
 
 const VideoArea: FC<{ localPeerName: string; remotePeerName: string }> = ({
   localPeerName,
@@ -14,11 +15,7 @@ const VideoArea: FC<{ localPeerName: string; remotePeerName: string }> = ({
       </div>
       <div className="w-full bg-gray-50 p-4">
         <div id="video" className=" h-96 flex items-center justify-center">
-          video
-        </div>
-        <div className="flex justify-between">
-          <p>{remotePeerName}</p>
-          <button type="button">icon</button>
+          <VideoRemote remotePeerName={remotePeerName} />
         </div>
       </div>
     </div>

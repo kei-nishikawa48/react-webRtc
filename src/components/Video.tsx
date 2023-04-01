@@ -4,7 +4,7 @@ const Video = ({
   isLocal,
 }: {
   name: string;
-  videoRef: React.RefObject<HTMLVideoElement>;
+  videoRef: React.RefObject<HTMLVideoElement> | null;
   isLocal: boolean;
 }) => {
   console.log(videoRef);

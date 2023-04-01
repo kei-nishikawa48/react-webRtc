@@ -1,3 +1,6 @@
+import { collection, onSnapshot } from "firebase/firestore";
+import { fireStore } from "../config/firebase";
+
 export default class RTCClient {
 	rtcPeerConnection: RTCPeerConnection;
 	mediaStream: MediaStream | null;
@@ -29,7 +32,11 @@ export default class RTCClient {
 	}
 	startListening(localPeerName: string) {
 		this.localPeerName = localPeerName;
-		this.setRtcClient();
-		//Todo :ここにシグナリングサーバーをリッスンする処理を追加する
+		const ref = collection(fireStore, localPeerName);
+		onSnapshot(ref, (snapshot) => {
+			const data = snapshot.docs.map((doc) => {
+				return doc.data();
+			});
+		});
 	}
 }

@@ -1,24 +1,22 @@
+import { useState } from "react";
+import RTCClient from "../utils/RTCClient";
 import InputForm from "./InputForm";
 
 import { useNavigate } from "react-router-dom";
 
-const InputRemoteForm = ({
-  remotePeerName,
-  setRemotePeerName,
-}: {
-  remotePeerName: string;
-  setRemotePeerName: (name: string) => void;
-}) => {
+const InputRemoteForm = ({ rtcClient }: { rtcClient: RTCClient }) => {
+  const [peerName, setPeerName] = useState("");
   const navigate = useNavigate();
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    rtcClient.remotePeerName = peerName;
     navigate("/video");
   };
   return (
     <InputForm
       name={"相手"}
-      setPeerName={setRemotePeerName}
-      peerName={remotePeerName}
+      setPeerName={setPeerName}
+      peerName={peerName}
       handleSubmit={handleSubmit}
     />
   );

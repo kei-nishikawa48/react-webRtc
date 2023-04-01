@@ -1,23 +1,25 @@
+import { useCallback, useState } from "react";
+import RTCClient from "../utils/RTCClient";
 import InputForm from "./InputForm";
 import { useNavigate } from "react-router-dom";
 
-const InputLocalForm = ({
-  setLocalPeerName,
-  localPeerName,
-}: {
-  setLocalPeerName: React.Dispatch<React.SetStateAction<string>>;
-  localPeerName: string;
-}) => {
+const InputLocalForm = ({ rtcClient }: { rtcClient: RTCClient }) => {
+  const [peerName, setPeerName] = useState("");
   const navigate = useNavigate();
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    navigate("/remote");
-  };
+  const handleSubmit = useCallback<React.FormEventHandler<HTMLFormElement>>(
+    (e) => {
+      e.preventDefault();
+      rtcClient.localPeerName = peerName;
+      navigate("/remote");
+    },
+    [peerName, rtcClient]
+  );
+
   return (
     <InputForm
       name={"自分"}
-      setPeerName={setLocalPeerName}
-      peerName={localPeerName}
+      peerName={peerName}
+      setPeerName={setPeerName}
       handleSubmit={handleSubmit}
     />
   );

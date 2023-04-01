@@ -7,7 +7,6 @@ const VideoLocal = ({ localPeerName }: { localPeerName: string }) => {
     if (videoRef === null) return;
     const currentVideoRef = videoRef.current;
     if (currentVideoRef === null) return;
-    console.log(videoRef);
     const getMedia = async () => {
       const constraints: MediaStreamConstraints = {
         audio: true,

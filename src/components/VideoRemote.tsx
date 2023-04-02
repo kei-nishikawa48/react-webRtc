@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
 import Video from "./Video";
 import RTCClient from "../utils/RTCClient";
 
 const VideoRemote = ({ rtcClient }: { rtcClient: RTCClient }) => {
-  const videoRef = null;
+  //todo:videoref はrtcClientに持たせる
+  const videoRef = rtcClient.remoteVideoRef;
   return (
     <>
       <Video

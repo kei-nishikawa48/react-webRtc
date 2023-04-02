@@ -7,7 +7,10 @@ export default class RTCClient {
 	localPeerName: string;
 	remotePeerName: string;
 	private _setRtcClient: (rtcClient: RTCClient) => void;
-	constructor(setRtcClient: (rtcClient: RTCClient) => void) {
+	constructor(
+		public remoteVideoRef: React.RefObject<HTMLVideoElement>,
+		setRtcClient: (rtcClient: RTCClient) => void,
+	) {
 		const config = {
 			iceServers: [{ urls: "stun:stun.stunprotocol.org" }],
 		};
@@ -52,12 +55,6 @@ export default class RTCClient {
 		}
 	}
 
-	get audioTrack() {
-		return this.mediaStream?.getAudioTracks()[0];
-	}
-	get videoTrack() {
-		return this.mediaStream?.getVideoTracks()[0];
-	}
 	startListening(localPeerName: string) {
 		this.localPeerName = localPeerName;
 		const ref = collection(fireStore, localPeerName);
@@ -66,5 +63,11 @@ export default class RTCClient {
 				return doc.data();
 			});
 		});
+	}
+	get audioTrack() {
+		return this.mediaStream?.getAudioTracks()[0];
+	}
+	get videoTrack() {
+		return this.mediaStream?.getVideoTracks()[0];
 	}
 }

@@ -9,8 +9,8 @@ const InputRemoteForm = ({ rtcClient }: { rtcClient: RTCClient }) => {
   const navigate = useNavigate();
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    rtcClient.remotePeerName = peerName;
-    rtcClient.setRtcClient();
+    rtcClient.connect(peerName);
+
     navigate("/video");
   };
   return (

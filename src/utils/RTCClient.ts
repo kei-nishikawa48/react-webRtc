@@ -30,6 +30,34 @@ export default class RTCClient {
 			console.error(error);
 		}
 	}
+
+	async setMediaStream() {
+		await this.getUserMedia();
+		this.addTracks();
+		this.setRtcClient();
+	}
+
+	addTracks() {
+		this.addAudioTrack();
+		this.addVideoTrack();
+	}
+	addAudioTrack() {
+		if (this.audioTrack && this.mediaStream) {
+			this.rtcPeerConnection.addTrack(this.audioTrack, this.mediaStream);
+		}
+	}
+	addVideoTrack() {
+		if (this.videoTrack && this.mediaStream) {
+			this.rtcPeerConnection.addTrack(this.videoTrack, this.mediaStream);
+		}
+	}
+
+	get audioTrack() {
+		return this.mediaStream?.getAudioTracks()[0];
+	}
+	get videoTrack() {
+		return this.mediaStream?.getVideoTracks()[0];
+	}
 	startListening(localPeerName: string) {
 		this.localPeerName = localPeerName;
 		const ref = collection(fireStore, localPeerName);

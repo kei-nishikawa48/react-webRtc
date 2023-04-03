@@ -1,4 +1,4 @@
-import { Firestore, addDoc, collection, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { fireStore } from "../config/firebase";
 
 export default class RTCClient {
@@ -88,7 +88,7 @@ export default class RTCClient {
 		}
 	}
 	async sendOffer() {
-		await addDoc(this.ref, {
+		await setDoc(this.ref, {
 			sessionDescription: this.localDescription,
 			type: "offer",
 			sender: this.localPeerName,
@@ -115,9 +115,8 @@ export default class RTCClient {
 		this.localPeerName = localPeerName;
 
 		onSnapshot(this.ref, (snapshot) => {
-			const data = snapshot.docs.map((doc) => {
-				return doc.data();
-			});
+			const data = snapshot.data();
+			console.log(data);
 		});
 	}
 	get audioTrack() {
@@ -130,6 +129,6 @@ export default class RTCClient {
 		return this.rtcPeerConnection.localDescription?.toJSON();
 	}
 	get ref() {
-		return collection(fireStore, this.localPeerName);
+		return doc(fireStore, `${this.localPeerName}/offer`);
 	}
 }

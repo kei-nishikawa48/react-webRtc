@@ -1,4 +1,4 @@
-import { collection, onSnapshot } from "firebase/firestore";
+import { Firestore, addDoc, collection, onSnapshot } from "firebase/firestore";
 import { fireStore } from "../config/firebase";
 
 export default class RTCClient {
@@ -66,11 +66,40 @@ export default class RTCClient {
 		};
 		this.setRtcClient();
 	}
-	connect(remotePeerName: string) {
+	async offer() {
+		const sessionDescription = await this.createOffer();
+		await this.setLocalDescription(sessionDescription);
+		await this.sendOffer();
+	}
+	private async createOffer() {
+		try {
+			return await this.rtcPeerConnection.createOffer();
+		} catch (er) {
+			console.error(er);
+		}
+	}
+	private async setLocalDescription(
+		sessionDescription: RTCSessionDescriptionInit | undefined,
+	) {
+		try {
+			await this.rtcPeerConnection.setLocalDescription(sessionDescription);
+		} catch (er) {
+			console.error(er);
+		}
+	}
+	async sendOffer() {
+		await addDoc(this.ref, {
+			sessionDescription: this.localDescription,
+			type: "offer",
+			sender: this.localPeerName,
+		});
+	}
+	async connect(remotePeerName: string) {
 		this.remotePeerName = remotePeerName;
 		this.setOnicecandidateCallback();
 
 		this.setOntrack();
+		await this.offer();
 		this.setRtcClient();
 	}
 	setOnicecandidateCallback() {
@@ -84,8 +113,8 @@ export default class RTCClient {
 
 	startListening(localPeerName: string) {
 		this.localPeerName = localPeerName;
-		const ref = collection(fireStore, localPeerName);
-		onSnapshot(ref, (snapshot) => {
+
+		onSnapshot(this.ref, (snapshot) => {
 			const data = snapshot.docs.map((doc) => {
 				return doc.data();
 			});
@@ -96,5 +125,11 @@ export default class RTCClient {
 	}
 	get videoTrack() {
 		return this.mediaStream?.getVideoTracks()[0];
+	}
+	get localDescription() {
+		return this.rtcPeerConnection.localDescription?.toJSON();
+	}
+	get ref() {
+		return collection(fireStore, this.localPeerName);
 	}
 }

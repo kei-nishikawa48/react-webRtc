@@ -7,9 +7,9 @@ import { useNavigate } from "react-router-dom";
 const InputRemoteForm = ({ rtcClient }: { rtcClient: RTCClient }) => {
   const [peerName, setPeerName] = useState("");
   const navigate = useNavigate();
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    rtcClient.connect(peerName);
+    await rtcClient.connect(peerName);
 
     navigate("/video");
   };

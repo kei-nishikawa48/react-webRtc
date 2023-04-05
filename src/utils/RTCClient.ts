@@ -1,4 +1,5 @@
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
+import FirebaseSignallingClient from "../repository/FirebaseSignallingClinet";
 import { fireStore } from "../config/firebase";
 
 export default class RTCClient {
@@ -6,6 +7,7 @@ export default class RTCClient {
 	mediaStream: MediaStream | null;
 	localPeerName: string;
 	remotePeerName: string;
+	firebaseSignallingClient: FirebaseSignallingClient;
 	private _setRtcClient: (rtcClient: RTCClient) => void;
 	constructor(
 		public remoteVideoRef: React.RefObject<HTMLVideoElement>,
@@ -19,6 +21,7 @@ export default class RTCClient {
 		this.remotePeerName = "";
 		this._setRtcClient = setRtcClient;
 		this.mediaStream = null;
+		this.firebaseSignallingClient = new FirebaseSignallingClient();
 	}
 
 	setRtcClient() {
@@ -88,16 +91,15 @@ export default class RTCClient {
 		}
 	}
 	async sendOffer() {
-		await setDoc(this.ref, {
-			sessionDescription: this.localDescription,
-			type: "offer",
-			sender: this.localPeerName,
-		});
+		this.firebaseSignallingClient.setPeerNames(
+			this.localPeerName,
+			this.remotePeerName,
+		);
+		await this.firebaseSignallingClient.sendOffer(this.localDescription);
 	}
 	async connect(remotePeerName: string) {
 		this.remotePeerName = remotePeerName;
 		this.setOnicecandidateCallback();
-
 		this.setOntrack();
 		await this.offer();
 		this.setRtcClient();
@@ -111,12 +113,51 @@ export default class RTCClient {
 		};
 	}
 
+	async answer(sender: string, sessionDescription: RTCSessionDescription) {
+		try {
+			console.log(sender);
+			this.remotePeerName = sender;
+			this.setOnicecandidateCallback();
+			this.setOntrack();
+			await this.setRemoteDescription(sessionDescription);
+			const answer = await this.rtcPeerConnection.createAnswer();
+			await this.rtcPeerConnection.setLocalDescription(answer);
+			await this.sendAnswer();
+		} catch (er) {
+			console.error(er);
+		}
+	}
+	async sendAnswer() {
+		this.firebaseSignallingClient.setPeerNames(
+			this.localPeerName,
+			this.remotePeerName,
+		);
+		await this.firebaseSignallingClient.sendAnswer(this.localDescription);
+	}
+	async setRemoteDescription(remoteDescription: RTCSessionDescription) {
+		await this.rtcPeerConnection.setRemoteDescription(remoteDescription);
+	}
 	startListening(localPeerName: string) {
 		this.localPeerName = localPeerName;
-
-		onSnapshot(this.ref, (snapshot) => {
-			const data = snapshot.data();
+		this.setRtcClient();
+		onSnapshot(doc(fireStore, `member/${this.localPeerName}`), async (doc) => {
+			const data = doc.data() as {
+				sender: string;
+				sessionDescription: RTCSessionDescription;
+				type: "offer" | "answer";
+			};
+			if (!doc.exists()) {
+				return;
+			}
 			console.log(data);
+			const { sender, sessionDescription, type } = data;
+			switch (type) {
+				case "offer":
+					await this.answer(sender, sessionDescription);
+					break;
+				default:
+					break;
+			}
 		});
 	}
 	get audioTrack() {
@@ -127,8 +168,5 @@ export default class RTCClient {
 	}
 	get localDescription() {
 		return this.rtcPeerConnection.localDescription?.toJSON();
-	}
-	get ref() {
-		return doc(fireStore, `${this.localPeerName}/offer`);
 	}
 }

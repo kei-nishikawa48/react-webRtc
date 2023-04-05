@@ -7,10 +7,10 @@ const InputLocalForm = ({ rtcClient }: { rtcClient: RTCClient }) => {
   const [peerName, setPeerName] = useState("");
   const navigate = useNavigate();
   const handleSubmit = useCallback<React.FormEventHandler<HTMLFormElement>>(
-    (e) => {
+    async (e) => {
+      e.preventDefault();
       rtcClient.startListening(peerName);
 
-      e.preventDefault();
       navigate("/remote");
     },
     [peerName, rtcClient]

@@ -25,6 +25,7 @@ const InputForm: FC<{
           />
         </div>
         <button
+          type="submit"
           disabled={!peerName}
           className={
             !peerName

@@ -1,4 +1,4 @@
-import { doc, setDoc } from "firebase/firestore";
+import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { fireStore } from "../config/firebase";
 
 export default class FirebaseSignallingClient {
@@ -30,5 +30,8 @@ export default class FirebaseSignallingClient {
 	}
 	get targetRef() {
 		return doc(fireStore, `member/${this.remotePeerName}`);
+	}
+	async remove(path: string) {
+		await deleteDoc(doc(fireStore, path));
 	}
 }

@@ -9,7 +9,7 @@ const InputLocalForm = ({ rtcClient }: { rtcClient: RTCClient }) => {
   const handleSubmit = useCallback<React.FormEventHandler<HTMLFormElement>>(
     async (e) => {
       e.preventDefault();
-      rtcClient.startListening(peerName);
+      await rtcClient.startListening(peerName);
 
       navigate("/remote");
     },

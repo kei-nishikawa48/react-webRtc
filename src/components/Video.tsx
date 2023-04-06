@@ -1,6 +1,9 @@
 import { useState } from "react";
 import VolumeButton from "./VolumeButton";
 import RTCClient from "../utils/RTCClient";
+import VideoCameraOffIcon from "./VideoCameraOffIcon";
+import VideoCameraOnIcon from "./VideoCameraOnIcon";
+import VideoButton from "./VideoButton";
 
 const Video = ({
   name,
@@ -14,6 +17,7 @@ const Video = ({
   rtcClient: RTCClient;
 }) => {
   const [muted, setMuted] = useState(false);
+  const [videoOff, setVideoOff] = useState(true);
 
   return (
     <>
@@ -25,14 +29,22 @@ const Video = ({
           ref={videoRef}
         />
       </div>
-      <div className="w-full">
-        <p className="p-3 text-lg">{name}</p>
+      <p className="p-3 text-lg">{name}</p>
+      <div className="w-full flex justify-between">
         <VolumeButton
           isLocal={isLocal}
           setMuted={setMuted}
           rtcClient={rtcClient}
           muted={muted}
         />
+        {isLocal && (
+          <VideoButton
+            videoOff={videoOff}
+            setVideoOff={setVideoOff}
+            rtcClient={rtcClient}
+            isLocal={isLocal}
+          />
+        )}
       </div>
     </>
   );

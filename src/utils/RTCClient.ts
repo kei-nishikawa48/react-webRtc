@@ -134,9 +134,12 @@ export default class RTCClient {
 			this.remotePeerName = sender;
 			this.setOnicecandidateCallback();
 			this.setOntrack();
+			console.log("setRemoteDescription", sessionDescription);
 			await this.setRemoteDescription(sessionDescription);
 			const answer = await this.rtcPeerConnection.createAnswer();
+			console.log("setLocalDescription answer:", answer);
 			await this.rtcPeerConnection.setLocalDescription(answer);
+			console.log("send answer");
 			await this.sendAnswer();
 			this.setRtcClient();
 		} catch (er) {
@@ -176,13 +179,16 @@ export default class RTCClient {
 			const { type, sender } = data;
 
 			if (type === "offer") {
+				console.log("offer");
 				const { sessionDescription } = data;
 				await this.answer(sender, sessionDescription);
+				console.log("send answer");
 			} else if (type === "answer") {
 				const { sessionDescription } = data;
 				await this.saveReceivedSessionDescription(sessionDescription);
 			} else if (type === "candidate") {
 				const { candidate } = data;
+				console.log("candidate");
 				await this.addIceCandidate(candidate);
 			}
 			this.setRtcClient();
@@ -194,9 +200,16 @@ export default class RTCClient {
 			this.setRtcClient();
 		}
 	}
+	toggleVideo() {
+		if (this.videoTrack) {
+			this.videoTrack.enabled = !this.videoTrack.enabled;
+			this.setRtcClient();
+		}
+	}
 	async addIceCandidate(candidate: RTCIceCandidateInit) {
 		try {
 			const iceCandidate = new RTCIceCandidate(candidate);
+			console.log("iceCandidate:", iceCandidate);
 			await this.rtcPeerConnection.addIceCandidate(iceCandidate);
 		} catch (er) {
 			console.error(er);

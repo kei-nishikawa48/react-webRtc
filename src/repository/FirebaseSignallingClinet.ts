@@ -34,4 +34,11 @@ export default class FirebaseSignallingClient {
 	async remove(path: string) {
 		await deleteDoc(doc(fireStore, path));
 	}
+	async sendCandidate(candidate: RTCIceCandidateInit) {
+		await setDoc(this.targetRef, {
+			type: "candidate",
+			sender: this.localPeerName,
+			candidate,
+		});
+	}
 }

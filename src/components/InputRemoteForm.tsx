@@ -17,7 +17,10 @@ const InputRemoteForm = ({ rtcClient }: { rtcClient: RTCClient }) => {
     if (!rtcClient.localPeerName) {
       navigate("/");
     }
-  }, []);
+    if (rtcClient.remoteVideoRef.current?.srcObject) {
+      navigate("/video");
+    }
+  }, [rtcClient]);
   return (
     <InputForm
       name={"相手"}

@@ -1,6 +1,16 @@
 import { doc, onSnapshot } from "firebase/firestore";
 import FirebaseSignallingClient from "../repository/FirebaseSignallingClinet";
 import { fireStore } from "../config/firebase";
+type SessionDescriptionData = {
+	sender: string;
+	type: "offer" | "answer";
+	sessionDescription: RTCSessionDescription;
+};
+type CandidateData = {
+	sender: string;
+	type: "candidate";
+	candidate: RTCIceCandidateInit;
+};
 
 export default class RTCClient {
 	rtcPeerConnection: RTCPeerConnection;
@@ -105,10 +115,12 @@ export default class RTCClient {
 		this.setRtcClient();
 	}
 	setOnicecandidateCallback() {
-		this.rtcPeerConnection.onicecandidate = ({ candidate }) => {
+		this.rtcPeerConnection.onicecandidate = async ({ candidate }) => {
+			//stan serverから自分のipアドレスの情報を教えてくれる
 			if (candidate) {
 				console.log({ candidate });
 				//todo:リモートに通信経路(candidate)を通知する
+				await this.firebaseSignallingClient.sendCandidate(candidate.toJSON());
 			}
 		};
 	}
@@ -149,29 +161,36 @@ export default class RTCClient {
 	async startListening(localPeerName: string) {
 		this.localPeerName = localPeerName;
 		this.setRtcClient();
-		await this.firebaseSignallingClient.remove(localPeerName);
+		await this.firebaseSignallingClient.remove(`member/${localPeerName}`);
 		onSnapshot(doc(fireStore, `member/${this.localPeerName}`), async (doc) => {
-			const data = doc.data() as {
-				sender: string;
-				sessionDescription: RTCSessionDescription;
-				type: "offer" | "answer";
-			};
+			const data = doc.data() as SessionDescriptionData | CandidateData;
+
 			if (!doc.exists()) {
 				return;
 			}
 			console.log(data);
-			const { sender, sessionDescription, type } = data;
-			switch (type) {
-				case "offer":
-					await this.answer(sender, sessionDescription);
-					break;
-				case "answer":
-					await this.saveReceivedSessionDescription(sessionDescription);
-					break;
-				default:
-					break;
+			const { type, sender } = data;
+
+			if (type === "offer") {
+				const { sessionDescription } = data;
+				await this.answer(sender, sessionDescription);
+			} else if (type === "answer") {
+				const { sessionDescription } = data;
+				await this.saveReceivedSessionDescription(sessionDescription);
+			} else if (type === "candidate") {
+				const { candidate } = data;
+				await this.addIceCandidate(candidate);
 			}
+			this.setRtcClient();
 		});
+	}
+	async addIceCandidate(candidate: RTCIceCandidateInit) {
+		try {
+			const iceCandidate = new RTCIceCandidate(candidate);
+			await this.rtcPeerConnection.addIceCandidate(iceCandidate);
+		} catch (er) {
+			console.error(er);
+		}
 	}
 	get audioTrack() {
 		return this.mediaStream?.getAudioTracks()[0];

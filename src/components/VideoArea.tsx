@@ -13,15 +13,11 @@ const VideoArea = ({ rtcClient }: { rtcClient: RTCClient }) => {
   }, []);
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="w-full bg-gray-50 p-4">
-        <div id="video" className="h-96 flex items-center justify-center">
-          <VideoLocal rtcClient={rtcClient} />
-        </div>
+      <div className="w-full">
+        <VideoLocal rtcClient={rtcClient} />
       </div>
-      <div className="w-full bg-gray-50 p-4">
-        <div id="video" className=" h-96 flex items-center justify-center">
-          <VideoRemote rtcClient={rtcClient} />
-        </div>
+      <div className="w-full">
+        <VideoRemote rtcClient={rtcClient} />
       </div>
     </div>
   );

@@ -1,16 +1,20 @@
 import { useState } from "react";
 import VolumeButton from "./VolumeButton";
+import RTCClient from "../utils/RTCClient";
 
 const Video = ({
   name,
   videoRef,
   isLocal,
+  rtcClient,
 }: {
   name: string;
   videoRef: React.RefObject<HTMLVideoElement> | null;
   isLocal: boolean;
+  rtcClient: RTCClient;
 }) => {
   const [muted, setMuted] = useState(false);
+
   return (
     <>
       <div className="w-full flex flex-col items-center justify-center text-center  box-border h-96 bg-gray-50">
@@ -23,7 +27,12 @@ const Video = ({
       </div>
       <div className="w-full">
         <p className="p-3 text-lg">{name}</p>
-        <VolumeButton setMuted={setMuted} muted={muted} />
+        <VolumeButton
+          isLocal={isLocal}
+          setMuted={setMuted}
+          rtcClient={rtcClient}
+          muted={muted}
+        />
       </div>
     </>
   );

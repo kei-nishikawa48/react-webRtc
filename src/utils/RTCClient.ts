@@ -42,6 +42,9 @@ export default class RTCClient {
 		try {
 			const constraints = { audio: true, video: true };
 			this.mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+			// this.mediaStream = await navigator.mediaDevices.getDisplayMedia(
+			// 	constraints,
+			// );
 		} catch (error) {
 			console.error(error);
 		}
@@ -59,6 +62,7 @@ export default class RTCClient {
 	}
 	addAudioTrack() {
 		if (this.audioTrack && this.mediaStream) {
+			console.log(this.audioTrack);
 			this.rtcPeerConnection.addTrack(this.audioTrack, this.mediaStream);
 		}
 	}
@@ -183,6 +187,12 @@ export default class RTCClient {
 			}
 			this.setRtcClient();
 		});
+	}
+	toggleAudio() {
+		if (this.audioTrack) {
+			this.audioTrack.enabled = !this.audioTrack.enabled;
+			this.setRtcClient();
+		}
 	}
 	async addIceCandidate(candidate: RTCIceCandidateInit) {
 		try {

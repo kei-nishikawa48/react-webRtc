@@ -5,6 +5,7 @@ import RTCClient from "../utils/RTCClient";
 const VideoLocal = ({ rtcClient }: { rtcClient: RTCClient }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStream = rtcClient.mediaStream;
+
   useEffect(() => {
     if (videoRef === null) return;
     const currentVideoRef = videoRef.current;
@@ -14,6 +15,7 @@ const VideoLocal = ({ rtcClient }: { rtcClient: RTCClient }) => {
   return (
     <>
       <Video
+        rtcClient={rtcClient}
         isLocal={true}
         name={rtcClient.localPeerName}
         videoRef={videoRef}

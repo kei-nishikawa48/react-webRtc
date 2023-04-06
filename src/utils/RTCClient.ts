@@ -127,7 +127,6 @@ export default class RTCClient {
 
 	async answer(sender: string, sessionDescription: RTCSessionDescription) {
 		try {
-			console.log(sender);
 			this.remotePeerName = sender;
 			this.setOnicecandidateCallback();
 			this.setOntrack();
@@ -135,6 +134,7 @@ export default class RTCClient {
 			const answer = await this.rtcPeerConnection.createAnswer();
 			await this.rtcPeerConnection.setLocalDescription(answer);
 			await this.sendAnswer();
+			this.setRtcClient();
 		} catch (er) {
 			console.error(er);
 		}
